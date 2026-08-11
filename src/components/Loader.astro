@@ -1,0 +1,86 @@
+---
+/* src/components/Loader.astro - High-End Curtain Reveal Loader */
+---
+
+<div
+  id="loader"
+  slot="loader"
+  class="fixed inset-0 z-[100] flex flex-col items-center justify-between p-8 bg-[#0e0e11] text-neutral-100 select-none overflow-hidden"
+  style="transition: transform 0.8s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.6s ease;"
+>
+  <!-- Top Branding / Status -->
+  <div class="w-full max-w-6xl flex justify-between items-center text-xs font-mono text-neutral-500 uppercase tracking-widest">
+    <span>Priyabrata Dash</span>
+    <span class="hidden sm:inline">Lead Software Engineer</span>
+  </div>
+
+  <!-- Center Monogram / Animated Element -->
+  <div class="flex flex-col items-center gap-3 my-auto">
+    <div class="relative flex items-center justify-center">
+      <!-- Outer subtle glowing ring -->
+      <div class="absolute w-20 h-20 rounded-full border border-primary-500/20 animate-ping opacity-25"></div>
+      <!-- Center Monogram -->
+      <span class="font-mono text-3xl font-bold tracking-widest text-neutral-100">
+        PD
+      </span>
+    </div>
+  </div>
+
+  <!-- Bottom Smooth Numeric Counter -->
+  <div class="w-full max-w-6xl flex justify-between items-end border-t border-neutral-800/60 pt-4">
+    <div class="flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+      <span class="font-mono text-xs text-neutral-400 uppercase tracking-wider">Loading Experience</span>
+    </div>
+    
+    <!-- Big Crisp Counter -->
+    <span id="loader-counter" class="font-mono text-4xl font-bold tracking-tighter text-neutral-200">
+      00
+    </span>
+  </div>
+</div>
+
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const loader = document.getElementById("loader");
+    const counter = document.getElementById("loader-counter");
+    
+    let current = 0;
+    const target = 100;
+    const duration = 800; // ms to count up
+    const startTime = performance.now();
+
+    function updateCounter(now: number) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Smooth ease-out curve for counting
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+      current = Math.floor(easedProgress * target);
+      
+      if (counter) {
+        counter.textContent = current < 10 ? `0${current}` : `${current}`;
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(updateCounter);
+      } else {
+        // Trigger curtain reveal exit animation
+        setTimeout(exitLoader, 150);
+      }
+    }
+
+    function exitLoader() {
+      if (!loader) return;
+      // Slide curtain UP and fade out smoothly
+      loader.style.transform = "translateY(-100%)";
+      loader.style.opacity = "0.9";
+      
+      setTimeout(() => {
+        loader.remove();
+      }, 850);
+    }
+
+    requestAnimationFrame(updateCounter);
+  });
+</script>

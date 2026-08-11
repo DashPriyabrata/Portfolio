@@ -1,0 +1,46 @@
+---
+// src/components/DroneVideo.astro
+interface Props {
+  previewSrc: string; // e.g., "/videos/previews/mustang-drone.mp4"
+  youtubeId: string;  // e.g., "dQw4w9WgXcQ" (Just the ID from the YouTube URL)
+  title: string;
+  details?: string;
+}
+
+const { previewSrc, youtubeId, title, details } = Astro.props;
+---
+
+<button
+  type="button"
+  class="video-card-trigger relative group break-inside-avoid rounded-xl overflow-hidden cursor-pointer mb-6 text-left w-full focus:outline-none block"
+  data-youtube-id={youtubeId}
+  data-title={title}
+>
+  {/* The 5-second looping preview */}
+  <video
+    src={previewSrc}
+    autoplay
+    muted
+    loop
+    playsinline
+    class="w-full h-auto transition-transform duration-700 group-hover:scale-105 pointer-events-none"
+  ></video>
+  
+  {/* Hover Overlay */}
+  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+    <div class="flex items-center justify-between mb-1">
+      <h3 class="text-white text-xl font-bold translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+        {title}
+      </h3>
+      {/* Subtle play badge indicator */}
+      <span class="bg-red-600 text-white text-xs px-2.5 py-1 rounded-md font-semibold translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+        Play Video
+      </span>
+    </div>
+    {details && (
+      <p class="text-darkslate-300 text-sm translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">
+        {details}
+      </p>
+    )}
+  </div>
+</button>

@@ -1,0 +1,70 @@
+---
+import Card from "./Card/index.astro";
+import { SITE } from "../site-config";
+
+const skillCategories = [
+  {
+    title: "Backend & Core",
+    badgeColor: "bg-sky-500/10 text-sky-400 border-sky-500/20 hover:border-sky-500/60 hover:bg-sky-500/20",
+    skills: ["C#.NET", ".NET Core", "Node.js", "NestJS", "SOLID", "PostgreSQL"]
+  },
+  {
+    title: "Frontend, Cloud & Ecosystem",
+    badgeColor: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20 hover:border-indigo-500/60 hover:bg-indigo-500/20",
+    skills: ["TypeScript", "Next.js", "React", "CMS", "SEO", "XAML", "Azure", "AWS", "GitHub Actions"]
+  },
+  {
+    title: "Architecture & AI",
+    badgeColor: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:border-emerald-500/60 hover:bg-emerald-500/20",
+    skills: ["Solution Design", "Clean Arch", "LLM Integration", "Agile"]
+  },
+  {
+    title: "Beyond the Screen",
+    badgeColor: "bg-amber-500/10 text-amber-400 border-amber-500/20 hover:border-amber-500/60 hover:bg-amber-500/20",
+    skills: ["Entrepreneurship", "Drones", "Photography", "AoE II", "Cats"]
+  }
+];
+---
+
+<Card colSpan="md:col-span-1" rowSpan="md:row-span-6" title="About me">
+  <div class="flex flex-col gap-4 h-full">
+    
+    <!-- Screen Reader Only -->
+    <p class="sr-only">
+      Started as a full stack software developer (backend-focused) from {SITE.location.originCountryName}. My primary
+      tools of choice includes: C#.NET, .NET Core, Content Management System, TypeScript and
+      Nodejs. I also have knowledge of NestJS, Next.js, React, SEO and solution architecture. Beyond coding, I'm passionate about AI, 
+      entrepreneurship, mobile apps, task automation leveraging AI and traveling. Occasionally I play console games.
+      While I have some preferred tools, I always choose the best one for the
+      job, even if it's not on my usual list. My goal is to find the right
+      solution for each project.
+    </p>
+
+    <!-- Visual Content -->
+    <div aria-hidden="true" class="flex flex-col gap-4">
+      <p class="text-sm font-light text-neutral-300 leading-relaxed">
+        Originaly from <i>{SITE.location.originCountryName}</i>. 
+        Formerly a Lead Software Engineer in <i>Singapore</i>, I specialize in scalable architectures and AI-backed automation.
+      </p>
+
+      <!-- Categorized Pill Matrix -->
+      <div class="flex flex-col gap-3 mt-1">
+        {skillCategories.map((cat) => (
+          <div class="flex flex-col gap-1.5">
+            <span class="text-[10px] font-semibold text-neutral-400 tracking-wider uppercase select-none">
+              {cat.title}
+            </span>
+            <div class="flex flex-wrap gap-1.5">
+              {cat.skills.map((skill) => (
+                <span class={`text-[11px] font-mono px-2 py-0.5 rounded-md border cursor-default select-none transition-colors duration-300 ${cat.badgeColor}`}>
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+    
+  </div>
+</Card>

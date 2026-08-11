@@ -1,0 +1,220 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Photo from "../components/Photo.astro"; // Import your new component
+import Video from "../components/Video.astro";
+import { SITE } from "../site-config";
+
+// Import your images
+import IrimotejimaJapan from "../assets/gallery/Irimotejima-Japan.webp";
+import JamesBondIsland from "../assets/gallery/James-Bond-Island.webp";
+import HuaHinTemple from "../assets/gallery/Hua-Hin-Temple.webp";
+import LanyueLake from "../assets/gallery/Lanyue-Lake-Lijiang.webp";
+import TanahLotBali from "../assets/gallery/Tanah-Lot-Bali.webp";  
+import MufuPalace from "../assets/gallery/Mufu-Palace-Lijiang.webp";  
+import Idukki from "../assets/gallery/Idukki.webp"; 
+// ... other imports ...
+---
+
+<script>
+  import { animate, type AnimationSequence } from "motion";
+  import { loaderAnimation } from "../lib/constants";
+
+  animate([loaderAnimation] as AnimationSequence);
+</script>
+
+<Layout
+  title={`${SITE.author.fullName} - Photography & Drone Shoots`}
+  description="A collection of some of my photography and drone shoots"
+>
+  <div class="flex flex-col items-center p-4 pt-40 pb-20 min-h-screen">
+    <a
+      href="/"
+      class="fixed top-10 left-10 text-white bg-neutral-900 hover:bg-neutral-800 w-fit px-4 py-2 border border-solid border-neutral-600 rounded-lg z-50 transition-colors"
+    >
+      Back
+    </a>
+    
+    <h1 class="text-white text-3xl font-bold mb-4">Photography & Drone</h1>
+    <p class="text-darkslate-300 mb-12 text-lg text-center max-w-2xl">
+      A collection of landscapes, portraits, and aerial perspectives I've captured in recent years.
+    </p>
+
+    {/* The Masonry Container */}
+    <div class="w-full max-w-7xl mx-auto columns-1 sm:columns-2 lg:columns-3 gap-6">
+      
+      {/* COLUMN 1 LEAD: The Video card placed first to ensure it is always row 1 */}
+      <Video 
+        previewSrc="/videos/previews/Muang-Fuang-Trailer.mp4" 
+        youtubeId="p2e4oozDgew" 
+        title="Muang Fuang Flight" 
+        details="DJI Air 2S • 4K 60fps"
+      />
+      {/* Break up the flow with a landscape shot */}
+      <Photo 
+        src={LanyueLake} 
+        title="Lanyue Lake, Lijiang" 
+        details="NIKON D750 • 70mm • f/16"
+      />
+      <Photo 
+        src={MufuPalace} 
+        title="Mufu Palace, Lijiang" 
+        details="NIKON D750 • 24mm • f/8" 
+      />
+
+      <Photo 
+        src={IrimotejimaJapan} 
+        title="Irimotejima, Japan" 
+        details="Samsung Note 8 • 4mm • f/1.7" 
+        eager={true} 
+        maxHeight="max-h-[550px]" 
+      />
+      
+      <Photo 
+        src={Idukki} 
+        title="Idukki, Kerala" 
+        details="KODAK Z950 • 6mm • f/3.5"
+        aspectRatio="landscape"
+      />
+      <Photo 
+        src={JamesBondIsland} 
+        title="James Bond Island, Phuket" 
+        details="NIKON D750 • 24mm • f/18" 
+        maxHeight="none"
+        eager={true}
+      />
+      {/* Follow with a constrained height to balance the bottom of the grid */}
+      <Photo 
+        src={TanahLotBali} 
+        title="Tanah Lot, Bali" 
+        details="Samsung Note 8 • 4mm • f/1.7" 
+        maxHeight="max-h-[440px]"
+      />
+
+      {/* COLUMN 3 LEAD: Another landscape, unconstrained to add variety */}
+      
+      <Photo 
+        src={HuaHinTemple} 
+        title="Wat Huay Mongkol, Hua Hin" 
+        details="NIKON D750 • 70mm • f/16" 
+      />
+
+    </div>
+  </div>
+  
+  {/* Unified Lightbox Dialog Modal */}
+<dialog id="media-modal" class="bg-transparent backdrop:bg-black/90 p-0 rounded-2xl max-w-5xl w-[90vw] overflow-hidden focus:outline-none">
+  <div class="relative bg-neutral-950 p-6 flex flex-col items-center justify-center min-h-[300px]">
+    
+    {/* Close Button */}
+    <button 
+      id="close-modal" 
+      class="absolute top-4 right-4 z-20 bg-black/60 hover:bg-black text-white p-2 rounded-full transition-colors"
+      aria-label="Close modal"
+    >
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+
+    {/* Video Player Container */}
+    <div id="video-container" class="w-full aspect-video hidden rounded-lg overflow-hidden">
+      <iframe 
+        id="modal-iframe"
+        title="YouTube video player"
+        class="w-full h-full border-0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+    </div>
+
+    {/* Photo Container */}
+    <div id="image-container" class="w-full flex items-center justify-center hidden">
+      <img 
+        id="modal-img" 
+        src="" 
+        alt="" 
+        class="max-h-[75vh] w-auto object-contain rounded-lg shadow-2xl" 
+      />
+    </div>
+
+    {/* Caption Info */}
+    <div class="w-full pt-4 mt-2 border-t border-neutral-800 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+      <h3 id="modal-title" class="text-white text-lg font-bold">Sample</h3>
+      <p id="modal-details" class="text-neutral-400 text-sm"></p>
+    </div>
+  </div>
+</dialog>
+</Layout>
+
+<script>
+  const dialog = document.getElementById('media-modal') as HTMLDialogElement;
+  const iframe = document.getElementById('modal-iframe') as HTMLIFrameElement;
+  const modalImg = document.getElementById('modal-img') as HTMLImageElement;
+  const videoContainer = document.getElementById('video-container');
+  const imageContainer = document.getElementById('image-container');
+  const modalTitle = document.getElementById('modal-title');
+  const modalDetails = document.getElementById('modal-details');
+  const closeBtn = document.getElementById('close-modal');
+
+  // Handle Photo Clicks
+  document.querySelectorAll('.photo-card-trigger').forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+      const imgSrc = trigger.getAttribute('data-img-src') || '';
+      const title = trigger.getAttribute('data-title') || '';
+      const details = trigger.getAttribute('data-details') || '';
+
+      // Set image source and caption
+      modalImg.src = imgSrc;
+      modalImg.alt = title;
+      if (modalTitle) modalTitle.textContent = title;
+      if (modalDetails) modalDetails.textContent = details;
+
+      // Show image, hide video
+      videoContainer?.classList.add('hidden');
+      imageContainer?.classList.remove('hidden');
+
+      dialog.showModal();
+    });
+  });
+
+  // Handle Video Clicks
+  document.querySelectorAll('.video-card-trigger').forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+      const youtubeId = trigger.getAttribute('data-youtube-id') || '';
+      const title = trigger.getAttribute('data-title') || '';
+      const details = trigger.getAttribute('data-details') || '';
+
+      iframe.src = `https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1`;
+      if (modalTitle) modalTitle.textContent = title;
+      if (modalDetails) modalDetails.textContent = details;
+
+      // Show video, hide image
+      imageContainer?.classList.add('hidden');
+      videoContainer?.classList.remove('hidden');
+
+      dialog.showModal();
+    });
+  });
+
+  // Close Logic
+  function closeModal() {
+    dialog.close();
+    iframe.src = ''; // Stops YouTube audio
+    modalImg.src = ''; // Clears image memory
+  }
+
+  closeBtn?.addEventListener('click', closeModal);
+
+  // Close on Backdrop Click
+  dialog?.addEventListener('click', (e) => {
+    const dialogBounds = dialog.getBoundingClientRect();
+    if (
+      e.clientX < dialogBounds.left ||
+      e.clientX > dialogBounds.right ||
+      e.clientY < dialogBounds.top ||
+      e.clientY > dialogBounds.bottom
+    ) {
+      closeModal();
+    }
+  });
+</script>

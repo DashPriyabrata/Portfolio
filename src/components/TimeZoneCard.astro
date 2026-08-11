@@ -1,0 +1,199 @@
+---
+import { getCurrentTimeInTimezone, formatTimeTo12H } from "../lib/helpers";
+import Card from "./Card/index.astro";
+import { SITE } from "../site-config";
+
+const homeTimezone = SITE.location.timezone;
+const initialHomeTime = getCurrentTimeInTimezone(homeTimezone);
+---
+
+<Card colSpan="lg:col-span-1" rowSpan="md:row-span-3">
+  <div class="flex flex-col justify-between h-full p-1">
+    
+    <!-- Top Row: "My Time" + Status Dot -->
+    <div class="flex flex-col gap-1">
+      <div class="flex items-center justify-between">
+        <span class="text-xs uppercase tracking-wider font-medium text-darkslate-300">
+          My Time
+        </span>
+        <!-- Working Hours / Status Indicator -->
+        <span 
+          id="statusIndicator" 
+          class="inline-flex items-center gap-1.5 text-xs px-2 py-0.5 rounded-full bg-neutral-800 text-neutral-400 border border-neutral-700/50 opacity-0 transition-opacity duration-300"
+        >
+          <span id="statusDot" class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          <span id="statusText">Local</span>
+        </span>
+      </div>
+
+      <div class="font-mono flex items-baseline gap-2 mt-0.5">
+        <time
+          id="homeTimeDisplay"
+          class="whitespace-nowrap text-3xl sm:text-3xl font-bold tabular-nums text-white"
+        >
+          {formatTimeTo12H(initialHomeTime)}
+        </time>
+        <span
+          id="homeTzDisplay"
+          data-timezone={homeTimezone}
+          class="text-xs font-semibold px-1.5 py-0.5 rounded bg-neutral-800 text-darkslate-300"
+        >
+          ---
+        </span>
+      </div>
+    </div>
+
+    <!-- <div class="my-2 border-t border-neutral-800/60"></div> -->
+     <hr />
+
+    <!-- Bottom Row: "Your Time" + Time Difference Badge -->
+    <div class="flex flex-col gap-0">
+      <div class="flex items-center justify-between">
+        <span class="text-xs uppercase tracking-wider font-medium text-darkslate-300">
+          Your Time
+        </span>
+        <!-- Time Difference Pill -->
+        <span 
+          id="timeOffsetBadge" 
+          class="text-[11px] font-medium text-emerald-400/90 bg-emerald-950/40 border border-emerald-800/30 px-2 py-0.5 rounded-md hidden"
+        >
+          0h diff
+        </span>
+      </div>
+
+      <div class="font-mono flex items-baseline gap-2 mt-0.5">
+        <time
+          id="visitorTimeDisplay"
+          class="whitespace-nowrap text-3xl sm:text-3xl font-bold tabular-nums text-white"
+        >
+          --:--
+        </time>
+        <span id="visitorTzDisplay" class="text-xs font-semibold px-1.5 py-0.5 rounded bg-neutral-800 text-darkslate-300">
+          ---
+        </span>
+      </div>
+    </div>
+
+  </div>
+</Card>
+
+<script>
+  function getVisitorTimezone(): string {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  }
+
+  function uses24HourFormat(): boolean {
+    const formatter = new Intl.DateTimeFormat(navigator.language, { hour: "numeric" });
+    const parts = formatter.formatToParts(new Date());
+    return !parts.some((part) => part.type === "dayPeriod");
+  }
+
+  function formatTimeForTimezone(date: Date, timezone: string, use24Hour: boolean): string {
+    return new Intl.DateTimeFormat(navigator.language, {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: !use24Hour,
+      timeZone: timezone,
+    }).format(date);
+  }
+
+  function getTimezoneAbbreviation(timezone: string): string {
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: timezone,
+      timeZoneName: "short",
+    });
+    const parts = formatter.formatToParts(new Date());
+    const tzName = parts.find((part) => part.type === "timeZoneName");
+    return tzName ? tzName.value : timezone.split("/").pop() || timezone;
+  }
+
+  function calculateHourOffset(homeTz: string, visitorTz: string): number {
+    const now = new Date();
+    
+    function getOffsetMinutes(tz: string) {
+      const str = new Intl.DateTimeFormat('en-US', {
+        timeZone: tz,
+        timeZoneName: 'longOffset'
+      }).format(now);
+      
+      const match = str.match(/GMT([+-]\d{2}):(\d{2})/);
+      if (!match) return 0;
+      const hours = parseInt(match[1], 10);
+      const mins = parseInt(match[2], 10);
+      return hours * 60 + (hours < 0 ? -mins : mins);
+    }
+
+    const homeOffset = getOffsetMinutes(homeTz);
+    const visitorOffset = getOffsetMinutes(visitorTz);
+    return (homeOffset - visitorOffset) / 60;
+  }
+
+  function updateClock() {
+    const homeTzDisplay = document.getElementById("homeTzDisplay");
+    const homeTimeDisplay = document.getElementById("homeTimeDisplay");
+    const visitorTimeDisplay = document.getElementById("visitorTimeDisplay");
+    const visitorTzDisplay = document.getElementById("visitorTzDisplay");
+    const timeOffsetBadge = document.getElementById("timeOffsetBadge");
+    const statusIndicator = document.getElementById("statusIndicator");
+    const statusDot = document.getElementById("statusDot");
+    const statusText = document.getElementById("statusText");
+
+    const homeTimezone = homeTzDisplay?.dataset?.timezone || "UTC";
+    const visitorTimezone = getVisitorTimezone();
+    const use24Hour = uses24HourFormat();
+    const now = new Date();
+
+    // 1. Update Time Displays
+    if (homeTimeDisplay) {
+      homeTimeDisplay.textContent = formatTimeForTimezone(now, homeTimezone, use24Hour);
+    }
+    if (visitorTimeDisplay) {
+      visitorTimeDisplay.textContent = formatTimeForTimezone(now, visitorTimezone, use24Hour);
+    }
+
+    // 2. Update Timezone Labels
+    if (homeTzDisplay) homeTzDisplay.textContent = getTimezoneAbbreviation(homeTimezone);
+    if (visitorTzDisplay) visitorTzDisplay.textContent = getTimezoneAbbreviation(visitorTimezone);
+
+    // 3. Update Relative Offset Badge
+    const diffHours = calculateHourOffset(homeTimezone, visitorTimezone);
+    if (timeOffsetBadge) {
+      timeOffsetBadge.classList.remove("hidden");
+      if (diffHours === 0) {
+        timeOffsetBadge.textContent = "Same time";
+      } else {
+        const aheadStr = diffHours > 0 ? "ahead" : "behind";
+        timeOffsetBadge.textContent = `${Math.abs(diffHours)}h ${aheadStr}`;
+      }
+    }
+
+    // 4. Working Hours Status (9 AM - 6 PM)
+    if (statusIndicator && statusDot && statusText) {
+      const homeHourStr = new Intl.DateTimeFormat("en-US", {
+        timeZone: homeTimezone,
+        hour: "numeric",
+        hour12: false
+      }).format(now);
+      const homeHour = parseInt(homeHourStr, 10);
+      const isWorkingHours = homeHour >= 9 && homeHour < 18;
+
+      statusIndicator.classList.remove("opacity-0");
+      if (isWorkingHours) {
+        statusDot.className = "w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse";
+        statusText.textContent = "Online";
+      } else {
+        statusDot.className = "w-1.5 h-1.5 rounded-full bg-amber-500/80";
+        statusText.textContent = "Off-hours";
+      }
+    }
+  }
+
+  // Precision Sync: Run immediately, then sync interval precisely to minute boundary
+  updateClock();
+
+  const secondsUntilNextMinute = 60 - new Date().getSeconds();
+  setTimeout(() => {
+    updateClock();
+    setInterval(updateClock, 60_000);
+  }, secondsUntilNextMinute * 1000);
+</script>
