@@ -1,6 +1,6 @@
 export const SITE = {
   "site": {
-    "url": "https://impdash.dev"
+    "url": "https://pdash.dev"
   },
   "author": {
     "firstName": "Priyabrata",

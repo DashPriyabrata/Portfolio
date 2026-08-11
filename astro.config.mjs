@@ -9,7 +9,7 @@ import solidJs from "@astrojs/solid-js";
 
 import svelte from "@astrojs/svelte";
 
-const envSiteUrl = process.env.SITE_URL ?? "https://impdash.dev/";
+const envSiteUrl = process.env.SITE_URL ?? "https://pdash.dev/";
 const site = envSiteUrl.endsWith("/") ? envSiteUrl : `${envSiteUrl}/`;
 const siteNoTrailingSlash = site.endsWith("/") ? site.slice(0, -1) : site;
 
@@ -68,5 +68,8 @@ export default defineConfig({
   adapter: netlify({ middlewareMode: "edge" }),
   vite: {
     assetsInclude: "**/*.riv",
+  },
+  security: {
+    csp: true,
   },
 });
