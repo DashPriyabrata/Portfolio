@@ -69,7 +69,4 @@ export default defineConfig({
   vite: {
     assetsInclude: "**/*.riv",
   },
-  security: {
-    csp: true,
-  },
 });
