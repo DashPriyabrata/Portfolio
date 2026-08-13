@@ -1,6 +1,6 @@
 # Astro Bento Portfolio — Priyabrata Dash
 
-![pdash.dev screenshot](src/assets/screenshot.jpg)
+![pdash.dev screenshot](src/assets/website-screenshot.jpg)
 
 A polished Astro portfolio [https://pdash.dev](https://pdash.dev) — bento-style, content-rich personal site showcasing projects, photography, travel, and a lightweight guestbook.
 
