@@ -1,19 +1,15 @@
-# Astro Bento Portfolio
+# Astro Bento Portfolio — Priyabrata Dash
 
-A polished Astro portfolio template built as a bento-style, content-rich personal site.
+![pdash.dev screenshot](src/assets/screenshot.jpg)
 
-Designed for easy customization, this repo ships the same production-ready features: a dynamic homepage, a photography gallery, a travel globe, and a guestbook backed by Drizzle + Turso.
+A polished Astro portfolio [https://pdash.dev](https://pdash.dev) — bento-style, content-rich personal site showcasing projects, photography, travel, and a lightweight guestbook.
 
 ## Features
 
-- Bento-style homepage with animated card entrance and a loader reveal
-- Personal intro, about, contacts, timezone, now, theme switcher, and CTA cards
+- Homepage with animated card entrance and a loader reveal
 - Interactive travel globe highlighting visited countries
 - Photography page with masonry layout, image cards, and embedded video previews
-- Guestbook with Astro API routes, form submission, pagination, and database persistence
 - SEO-friendly metadata, Open Graph tags, Twitter cards, JSON-LD, sitemap, and robots.txt
-- Netlify SSR-ready Astro setup
-- MIT licensed and ready to clone, fork, and adapt
 
 ## Tech Stack
 
@@ -43,7 +39,7 @@ pnpm install
 pnpm dev
 ```
 
-Then open the local Astro dev server at `http://localhost:4321`.
+Then open the local Astro dev server at the url in your console window.
 
 ### Helpful commands
 
@@ -63,6 +59,24 @@ pnpm eslint
 5. Adjust your social links, timezone, and travel destinations in [src/site-config.ts](src/site-config.ts).
 
 The homepage is built from reusable cards, so you can remove or rearrange sections without changing the overall layout system.
+
+## Umami (Analytics)
+
+This site includes Umami analytics for privacy-focused tracking. A hosted Umami script tag is already injected in the layout at [src/layouts/BasicLayout.astro](src/layouts/BasicLayout.astro#L1-L200). The default uses the cloud.umami.is host and a sample `data-website-id`:
+
+```html
+<script defer src="https://cloud.umami.is/script.js" data-website-id="<your-id>"></script>
+```
+
+To enable analytics for your site:
+
+- Replace the `data-website-id` with your Umami website id (from your Umami dashboard).
+- If self-hosting Umami, change the `src` to your Umami instance URL and ensure it is served over HTTPS.
+
+## Extra Tips
+
+- Replace the memoji avatars in `src/assets` with your own images to personalize the homepage.
+- If you use the guestbook, ensure environment variables for the Turso/libSQL database are set in your deploy environment.
 
 ## Guestbook Setup
 
@@ -89,8 +103,7 @@ pnpm db:push
 - [src/pages/photography.astro](src/pages/photography.astro) - photography gallery
 - [src/pages/travel.astro](src/pages/travel.astro) - visited countries globe
 - [src/pages/guestbook.astro](src/pages/guestbook.astro) - guestbook page
-- [src/pages/api/guestbook.ts](src/pages/api/guestbook.ts) - guestbook API route
-- [src/components](src/components) - reusable cards, media, loader, pulse, and UI pieces
+- [src/components](src/components) - reusable components
 - [src/layouts](src/layouts) - shared page shells and SEO/meta handling
 - [src/db](src/db) - database client and schema
 - [public](public) - static assets and preview media
@@ -107,4 +120,6 @@ Released under the [MIT License](LICENSE). You can clone it, customize it, and u
 
 ## Author
 
-Built by Priyabrata Dash.
+Built by Priyabrata Dash 🤵 
+
+Find my personal portfolio: [https://pdash.dev](https://pdash.dev)
